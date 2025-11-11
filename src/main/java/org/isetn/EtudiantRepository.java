@@ -11,5 +11,7 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
 	//@Query("select p from Etudiant e where e.nom like :x")
 	//public List<Etudiant> Chercher(@Param("x")String nom);
 	//ou d'ecrire 
-	public List<Etudiant> findByNomContains(String nom); 
+	public List<Etudiant> findByNomContains(String nom);
+
+	public List<Etudiant> findByClasseCodClass(Long codClass); 
 }
