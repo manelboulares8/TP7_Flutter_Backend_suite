@@ -1,7 +1,9 @@
 package org.isetn;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -43,6 +46,8 @@ public class Etudiant {
 	    @JsonBackReference(value = "classe-etudiants") // 👈 empêche rebouclage
 	    private Classe classe;
 	
+	    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)
+	    private List<Note> notes;
 	
 	public Etudiant(Long id, String nom, String prenom, Date dateNais, Formation formation, Classe classe) {
 		super();
