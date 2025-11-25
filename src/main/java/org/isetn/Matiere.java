@@ -23,7 +23,7 @@ public class Matiere {
     private String intMat;
     private String description;
     
-    @OneToMany(mappedBy = "matiere", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matiere", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "matiere-classMats")
     private List<ClassMat> classMats;
     

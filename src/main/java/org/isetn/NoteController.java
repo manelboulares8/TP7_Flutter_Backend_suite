@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class NoteController {
     }
 
     // POST /api/notes - ajouter une note
-    @PostMapping
+   /* @PostMapping
     public ResponseEntity<Note> addNote(@RequestBody Map<String, Object> requestData) {
         try {
             System.out.println("📥 Données note reçues: " + requestData);
@@ -96,7 +97,60 @@ public class NoteController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
+    }*/
+    
+    @PostMapping
+    public ResponseEntity<Object> addNote(@RequestBody Map<String, Object> requestData) {
+        try {
+            System.out.println("📥 Données note reçues: " + requestData);
+
+            Map<String, Object> etudiantMap = (Map<String, Object>) requestData.get("etudiant");
+            Map<String, Object> matiereMap = (Map<String, Object>) requestData.get("matiere");
+
+            Long etudiantId = ((Number) etudiantMap.get("id")).longValue();
+            Long matiereId = ((Number) matiereMap.get("codMat")).longValue();
+            Double valeurNote = ((Number) requestData.get("valeurNote")).doubleValue();
+
+            // Vérifier l'étudiant
+            Optional<Etudiant> etudiantOpt = etudiantRepository.findById(etudiantId);
+            if (!etudiantOpt.isPresent()) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "❌ Étudiant non trouvé.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Vérifier la matière
+            Optional<Matiere> matiereOpt = matiereRepository.findById(matiereId);
+            if (!matiereOpt.isPresent()) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "❌ Matière non trouvée.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Vérifier si une note existe déjà
+            if (noteRepository.existsByEtudiantIdAndMatiereCodMat(etudiantId, matiereId)) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "⚠️ Une note pour cet étudiant dans cette matière existe déjà.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Créer la note
+            Note note = new Note();
+            note.setEtudiant(etudiantOpt.get());
+            note.setMatiere(matiereOpt.get());
+            note.setValeurNote(valeurNote);
+
+            Note savedNote = noteRepository.save(note);
+            System.out.println("💾 Note sauvegardée avec ID: " + savedNote.getId());
+            return ResponseEntity.ok(savedNote);
+
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "❌ Erreur lors de la sauvegarde: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
+
 
     // PUT /api/notes/{id} - modifier une note
     @PutMapping("/{id}")

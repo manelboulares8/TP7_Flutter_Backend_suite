@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -17,6 +18,11 @@ public class MatiereController {
 
     @Autowired
     private ClassMatRepository classMatRepository;
+    
+    
+
+    @Autowired
+    private ClasseRepository classeRepository;
 
     // GET /matieres - lister toutes les matières
     @GetMapping
@@ -33,7 +39,7 @@ public class MatiereController {
     }
 
     // POST /matieres - ajouter une matière
-    @PostMapping
+   /* @PostMapping
     public ResponseEntity<Matiere> addMatiere(@RequestBody Matiere matiere) {
         try {
             System.out.println("📥 Ajout matière: " + matiere.getIntMat());
@@ -44,9 +50,9 @@ public class MatiereController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+*/
     // PUT /matieres/{id} - modifier une matière
-    @PutMapping("/{id}")
+  /*  @PutMapping("/{id}")
     public ResponseEntity<Matiere> updateMatiere(@PathVariable Long id, @RequestBody Matiere matiereDetails) {
         try {
             Optional<Matiere> optionalMatiere = matiereRepository.findById(id);
@@ -63,7 +69,7 @@ public class MatiereController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-    }
+    }*/
 
     // DELETE /matieres/{id} - supprimer une matière
     @DeleteMapping("/{id}")
@@ -83,5 +89,94 @@ public class MatiereController {
     @GetMapping("/classe/{classId}")
     public List<Matiere> getMatieresByClass(@PathVariable Long classId) {
         return matiereRepository.findByClassMatsClasseCodClass(classId);
+    }
+    
+    
+    
+    @PostMapping
+    public ResponseEntity<Object> addMatiere(@RequestBody Map<String, Object> requestData) {
+        try {
+            String intMat = (String) requestData.get("intMat");
+            String description = (String) requestData.get("description");
+            Number classeIdNumber = (Number) requestData.get("classeId"); // ID de la classe
+
+            if (classeIdNumber == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "⚠️ Veuillez préciser la classe pour la matière"));
+            }
+
+            Long classeId = classeIdNumber.longValue();
+            Optional<Classe> classeOpt = classeRepository.findById(classeId);
+            if (!classeOpt.isPresent()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "⚠️ Classe non trouvée"));
+            }
+
+            Matiere matiere = new Matiere();
+            matiere.setIntMat(intMat);
+            matiere.setDescription(description);
+
+            Matiere savedMatiere = matiereRepository.save(matiere);
+
+            // Créer la relation avec la classe
+            ClassMat classMat = new ClassMat();
+            classMat.setClasse(classeOpt.get());
+            classMat.setMatiere(savedMatiere);
+            classMatRepository.save(classMat);
+
+            return ResponseEntity.ok(savedMatiere);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Erreur lors de l'ajout de la matière"));
+        }
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateMatiere(@PathVariable Long id, @RequestBody Map<String, Object> requestData) {
+        try {
+            Optional<Matiere> optionalMatiere = matiereRepository.findById(id);
+            if (!optionalMatiere.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Matiere matiere = optionalMatiere.get();
+
+            String intMat = (String) requestData.get("intMat");
+            String description = (String) requestData.get("description");
+            Number classeIdNumber = (Number) requestData.get("classeId");
+
+            matiere.setIntMat(intMat);
+            matiere.setDescription(description);
+
+            Matiere updatedMatiere = matiereRepository.save(matiere);
+
+            if (classeIdNumber != null) {
+                Long classeId = classeIdNumber.longValue();
+                Optional<Classe> classeOpt = classeRepository.findById(classeId);
+                if (classeOpt.isPresent()) {
+                    // Récupérer la liste des ClassMat pour cette matière
+                    List<ClassMat> classMats = classMatRepository.findByMatiere_CodMat(id);
+                    ClassMat classMat;
+
+                    if (classMats.isEmpty()) {
+                        classMat = new ClassMat();
+                    } else {
+                        classMat = classMats.get(0); // prend le premier ClassMat existant
+                    }
+
+                    classMat.setClasse(classeOpt.get());
+                    classMat.setMatiere(updatedMatiere);
+                    classMatRepository.save(classMat);
+                }
+            }
+
+            return ResponseEntity.ok(updatedMatiere);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Erreur lors de la modification de la matière"));
+        }
     }
 }

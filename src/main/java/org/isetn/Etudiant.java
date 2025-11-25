@@ -37,7 +37,7 @@ public class Etudiant {
 	    private Date dateNais;
 
 	    @ManyToOne(fetch = FetchType.EAGER) // par défaut c’est LAZY
-	    @JoinColumn(name = "formation_id")
+	    @JoinColumn(name = "formation_id", nullable = true)
 	    @JsonBackReference(value = "formation-etudiants")
 	    private Formation formation;
 

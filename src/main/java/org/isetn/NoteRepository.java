@@ -18,4 +18,7 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     
     // Vérifier si une note existe déjà pour un étudiant dans une matière
     boolean existsByEtudiantIdAndMatiereCodMat(Long etudiantId, Long matiereId);
+    
+    //List<Note> findByEtudiantId(Long id);
+
 }

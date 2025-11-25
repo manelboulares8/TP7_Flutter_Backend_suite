@@ -36,7 +36,7 @@ public class ClasseController {
 
     // POST /classes - ajouter une classe avec département
     
-    @PostMapping(consumes = "application/json")
+    @PostMapping()
     public ResponseEntity<Classe> addClasse(@RequestBody Classe classe) {
         try {
             System.out.println("📥 Données reçues: " + classe.getNomClass() + ", " + classe.getNbreEtud());

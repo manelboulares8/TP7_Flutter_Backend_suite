@@ -33,7 +33,7 @@ public class ScolA7Application implements CommandLineRunner {
 		//Etudiant et = new Etudiant(null, "Ali", "Ben Ali", new Date());
 		//etudiantRepository.save(et);
 		//ou
-		Formation f1 = formationRepository.save(new Formation(null,"Oracle",100,null));
+	/*	Formation f1 = formationRepository.save(new Formation(null,"Oracle",100,null));
 		Formation f2 = formationRepository.save(new Formation(null,"J2EE",10,null));
 		Formation f3 = formationRepository.save(new Formation(null,"Angular",120,null));
 
@@ -48,6 +48,6 @@ public class ScolA7Application implements CommandLineRunner {
 		etudiantRepository.save(new Etudiant(null, "Amin", "Ben Mahmoud", new Date(),f2,c1));
 		etudiantRepository.save(new Etudiant(null, "Samia", "Ben Ahmed", new Date(),f3,c1));
 		etudiantRepository.save(new Etudiant(null, "Foulen", "Ben Foulen1", new Date(),f3,c2));
-		etudiantRepository.save(new Etudiant(null, "Foulen", "Ben Foulen2", new Date(),f3,c3));
+		etudiantRepository.save(new Etudiant(null, "Foulen", "Ben Foulen2", new Date(),f3,c3));*/
 	}
 }

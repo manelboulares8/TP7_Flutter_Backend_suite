@@ -3,7 +3,8 @@ package org.isetn;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
-
+import org.springframework.http.MediaType;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 @Configuration
 public class GlobalRepositoryRestConfigurer extends RepositoryRestConfigurerAdapter {
 	@Override
@@ -21,7 +22,8 @@ public class GlobalRepositoryRestConfigurer extends RepositoryRestConfigurerAdap
 		.allowedOrigins("*")
 		.allowedHeaders("*")
 		.allowedMethods("OPTIONS","HEAD", "GET", "PUT", "POST", "DELETE", "PATCH" );
+		
 
 	}
-
+	
 }
